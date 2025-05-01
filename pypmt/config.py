@@ -7,12 +7,14 @@ from pypmt.encoders.basic import EncoderForall, EncoderSequential, EncoderExists
 from pypmt.encoders.SequentialLifted import EncoderSequentialLifted
 from pypmt.encoders.SequentialQFUF import EncoderSequentialQFUF
 from pypmt.encoders.OMT import EncoderSequentialOMT
+from pypmt.encoders.SequentialAD import EncoderSequentialAD
 
 from pypmt.planner.SMT import SMTSearch
 from pypmt.planner.SMTActionPropagator import SMTSearchActionPropagator
 from pypmt.planner.lifted import LiftedSearch
 from pypmt.planner.QFUF import QFUFSearch
 from pypmt.planner.OMT import OMTSearch
+from pypmt.planner.AD import ADSearch
 from pypmt.propagators.base import BasePropagator
 from pypmt.propagators.exists import ExistsPropagator
 from pypmt.propagators.forall import ForallPropagator
@@ -62,6 +64,11 @@ class Config:
     ]
     lifted_encoders_default_compilation_list = [
         ('up_quantifiers_remover', CompilationKind.QUANTIFIERS_REMOVING)
+    ]
+    causal_encoders_default_compilation_list = [
+        ('up_quantifiers_remover', CompilationKind.QUANTIFIERS_REMOVING), 
+        ('up_disjunctive_conditions_remover', CompilationKind.DISJUNCTIVE_CONDITIONS_REMOVING), 
+        ('up_conditional_effects_remover', CompilationKind.CONDITIONAL_EFFECTS_REMOVING)
     ]
 
     valid_configs = {
@@ -130,6 +137,13 @@ class Config:
         #    "propagator": None,
         #    "description": "A sequential encoding with OMT"
         #}
+        "sad": {
+            "encoder": EncoderSequentialAD,
+            "search": ADSearch,
+            "compilationlist": causal_encoders_default_compilation_list,
+            "propagator": None,
+            "description": "A quantifier-free, sequential lifted causal encoding"
+        },
     }
 
     def __init__(self, initial_config=None):
